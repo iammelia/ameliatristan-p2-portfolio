@@ -1,6 +1,6 @@
 ---
 title: "An example exploratory analysis script"
-author: "Andreas Handel"
+author: "Leonel Salazar"
 date: "10/28/2021"
 output: html_document
 ---

@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "YOURNAME Data Analysis Portfolio"
+  title: "Amelia Tristan's Data Analysis Portfolio"
   navbar:
     left:
       - text: "About Me"
@@ -18,13 +18,15 @@ website:
             file: presentation-exercise/presentation-exercise.qmd
           - text: "Tidy Tuesday Exercise"
             file: tidytuesday-exercise/tidytuesday-exercise.qmd
+          - text: "Data Exercise"
+            file: data-exercise/data-exercise.qmd
     right:
       - icon: github 
-        href: URL-TO-THIS-REPOSITORY-HERE        
+        href: https://github.com/iammelia/ameliatristan-p2-portfolio       
 
 format:
   html:
-    theme: cosmo
+    theme: minty
     highlight: zenburn
     css: styles.css
     toc: FALSE
