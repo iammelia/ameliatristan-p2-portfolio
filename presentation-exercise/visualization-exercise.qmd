@@ -1,0 +1,22 @@
+---
+title: "Visualization Exercise"
+---
+
+Using ChatGPT, I produced a publication worthy visualization similar to the one published here: https://fivethirtyeight.com/videos/the-ultimate-halloween-candy-power-ranking/ .
+
+The following are the prompts and resulting code from CGPT:
+
+Prompt 1: Can you write code in R to recreate this chart? *attached screenshot of chart
+Result 1: A bare bones code structure that built its own data frame from a set of candy names and win percentages.
+
+Prompt 2: Can you recreate the chart using this data? *attached .csv file
+Result 2: Code that created the data frame from the csv file and a ggplot with only the top 18 ranking candies.
+
+Prompt 3: Can you make the plot interactive?
+Result 3: Same code as result 2, except using plotly to create the interactive chart instead of using ggplot.
+
+Prompt 4: Can you add their ranking number next to the candy name?
+Result 4: Same code as result 3, plus a new variable called rank that is displayed next to the candy name in the ploty plot.
+
+Prompt 5: Can you write code that displays the rank, candy name, then win percentage bar within a table?
+Result 5: A formattable table that displays the candy name, win percentage in a color coded single-bar graph, and rank number.

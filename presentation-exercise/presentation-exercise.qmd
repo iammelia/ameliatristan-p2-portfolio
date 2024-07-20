@@ -2,4 +2,238 @@
 title: "Presentation Exercise"
 ---
 
-Placeholder file for the future data/results presentation exercise.
+#Original
+
+![Original Chart from 538](candy-538.png)
+#Prompts and Results
+
+Using ChatGPT, I produced a publication worthy visualization similar to the one published here: https://fivethirtyeight.com/videos/the-ultimate-halloween-candy-power-ranking/ .
+
+The following are the prompts and resulting code from CGPT:
+
+Prompt 1: Can you write code in R to recreate this chart? *attached screenshot of chart
+Result 1: A bare bones code structure that built its own data frame from a set of candy names and win percentages.
+
+Prompt 2: Can you recreate the chart using this data? *attached .csv file
+Result 2: Code that created the data frame from the csv file and a ggplot with only the top 18 ranking candies.
+
+Prompt 3: Can you make the plot interactive?
+Result 3: Same code as result 2, except using plotly to create the interactive chart instead of using ggplot.
+
+Prompt 4: Can you add their ranking number next to the candy name?
+Result 4: Same code as result 3, plus a new variable called rank that is displayed next to the candy name in the ploty plot.
+
+Prompt 5: Can you write code that displays the rank, candy name, then win percentage bar within a table?
+Result 5: A formattable table that displays the candy name, win percentage in a color coded single-bar graph, and rank number.
+
+#Result 1
+A bare bones code that created its own data frame for candy_data.
+
+#Result 2
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(readr)
+
+# Load the data
+candy_data <- read_csv("candy-data.csv")
+
+# Select relevant columns and rename for clarity
+candy_data <- candy_data %>% 
+  select(CANDY = competitorname, WIN_PERCENTAGE = winpercent)
+
+# Sort data by WIN_PERCENTAGE in descending order
+candy_data <- candy_data %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  head(18) # Take the top 18 candies
+
+# Plot the data
+ggplot(candy_data, aes(x = reorder(CANDY, WIN_PERCENTAGE), y = WIN_PERCENTAGE)) +
+  geom_bar(stat = "identity", fill = "orange") +
+  coord_flip() +
+  labs(title = "Candy Ranking by Win Percentage",
+       x = "Candy",
+       y = "Win Percentage") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 8))
+```
+
+
+#Result 3
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(plotly)
+
+# Load the data
+candy_data <- read_csv("candy-data.csv")
+
+# Select relevant columns and rename for clarity
+candy_data <- candy_data %>% 
+  select(CANDY = competitorname, WIN_PERCENTAGE = winpercent)
+
+# Sort data by WIN_PERCENTAGE in descending order
+candy_data <- candy_data %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  head(18) # Take the top 18 candies
+
+# Create the ggplot chart
+p <- ggplot(candy_data, aes(x = reorder(CANDY, WIN_PERCENTAGE), y = WIN_PERCENTAGE, text = paste("Candy:", CANDY, "<br>Win Percentage:", WIN_PERCENTAGE))) +
+  geom_bar(stat = "identity", fill = "orange") +
+  coord_flip() +
+  labs(title = "Candy Ranking by Win Percentage",
+       x = "Candy",
+       y = "Win Percentage") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 8))
+
+# Convert the ggplot chart to an interactive plotly chart
+interactive_plot <- ggplotly(p, tooltip = "text")
+
+# Display the interactive chart
+interactive_plot
+```
+
+#Result 4
+```{r}
+
+# Sort data by WIN_PERCENTAGE in descending order and add ranking
+candy_data <- candy_data %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  head(18) %>%
+  mutate(RANK = row_number(),
+         CANDY_LABEL = paste(RANK, CANDY, sep = ". "))
+
+# Create the ggplot chart
+p <- ggplot(candy_data, aes(x = reorder(CANDY_LABEL, WIN_PERCENTAGE), y = WIN_PERCENTAGE, text = paste("Candy:", CANDY, "<br>Win Percentage:", WIN_PERCENTAGE))) +
+  geom_bar(stat = "identity", fill = "orange") +
+  coord_flip() +
+  labs(title = "Candy Ranking by Win Percentage",
+       x = "Candy",
+       y = "Win Percentage") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 8))
+
+# Convert the ggplot chart to an interactive plotly chart
+interactive_plot <- ggplotly(p, tooltip = "text")
+
+# Display the interactive chart
+interactive_plot
+```
+
+#Result 5
+```{r}
+
+# Load necessary libraries
+library(readr)
+library(dplyr)
+library(formattable)
+
+# Sort data by WIN_PERCENTAGE in descending order and add ranking
+candy_data <- candy_data %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  head(18) %>%
+  mutate(RANK = row_number())
+
+# Create a formattable table
+formatted_table <- formattable(candy_data, list(
+  RANK = formatter("span", style = ~ style(color = "black")),
+  CANDY = formatter("span", style = ~ style(color = "black")),
+  WIN_PERCENTAGE = formatter("span",
+                             style = x ~ style(display = "block",
+                                               direction = "rtl",
+                                               "border-radius" = "4px",
+                                               "padding-right" = "2px",
+                                               "background-color" = ifelse(x > 75, "orange", ifelse(x > 50, "lightgreen", "lightblue")),
+                                               width = paste0(x, "%")),
+                             x ~ sprintf("%.1f%%", x))
+))
+
+# Display the formatted table
+formatted_table
+```
+#My Tweaked Version
+
+```{r}
+
+candy_data2 = read_csv("candy-data.csv")
+
+# Select relevant columns and rename for clarity
+candy_data2 <- candy_data2 %>% 
+  select(CANDY = competitorname, WIN_PERCENTAGE = winpercent)
+
+# Sort data by WIN_PERCENTAGE in descending order and add ranking
+candy_data2 <- candy_data2 %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  mutate(RANK = row_number())
+
+# Customize column names
+candy_data2 <- candy_data2 %>%
+  rename(`Win Percentage` = WIN_PERCENTAGE)
+
+# Create a formattable table
+formatted_table <- formattable(candy_data2, list(
+  RANK = formatter("span", style = ~ style(color = "black")),
+  CANDY = formatter("span", style = ~ style(color = "black")),
+  `Win Percentage` = formatter("span",
+                             style = x ~ style(display = "block",
+                                               direction = "rtl",
+                                               "border-radius" = "4px",
+                                               "padding-right" = "2px",
+                                               "background-color" = ifelse(x > 75, "orange", ifelse(x > 50, "lightgreen", "lightblue")),
+                                               width = paste0(x, "%")),
+                             x ~ sprintf("%.1f%%", x))
+))
+
+# Add a label to the table
+html_header <- "<h2 style='text-align: center;'>Halloween Candies Ranked</h2>"
+html_table <- as.htmlwidget(formatted_table)
+html_table <- htmltools::tagList(htmltools::HTML(html_header), html_table)
+
+# Display the formatted table with the header
+htmltools::browsable(html_table)
+```
+
+#Another Table
+
+```{r}
+candy_data3 = read_csv("candy-data.csv")
+
+# Select relevant columns and rename for clarity
+candy_data3 <- candy_data3 %>% filter(chocolate == 1 | caramel == 1) %>% 
+  select(CANDY = competitorname, WIN_PERCENTAGE = winpercent)
+
+# Sort data by WIN_PERCENTAGE in descending order and add ranking
+candy_data3 <- candy_data3 %>%
+  arrange(desc(WIN_PERCENTAGE)) %>%
+  mutate(RANK = row_number())
+
+# Customize column names
+candy_data3 <- candy_data3 %>%
+  rename(`Win Percentage` = WIN_PERCENTAGE)
+
+# Create a formattable table
+formatted_table <- formattable(candy_data3, list(
+  RANK = formatter("span", style = ~ style(color = "black")),
+  TYPE = formatter("span", style = ~ style(color = "black")),
+  `Win Percentage` = formatter("span",
+                             style = x ~ style(display = "block",
+                                               direction = "rtl",
+                                               "border-radius" = "4px",
+                                               "padding-right" = "2px",
+                                               "background-color" = ifelse(x > 75, "brown", ifelse(x > 50, "tan", "beige")),
+                                               width = paste0(x, "%")),
+                             x ~ sprintf("%.1f%%", x))
+))
+
+# Add a label to the table
+html_header <- "<h2 style='text-align: center;'>Halloween Candies Ranked: Chocolate & Caramel Edition</h2>"
+html_table <- as.htmlwidget(formatted_table)
+html_table <- htmltools::tagList(htmltools::HTML(html_header), html_table)
+
+# Display the formatted table with the header
+htmltools::browsable(html_table)
+```
+
