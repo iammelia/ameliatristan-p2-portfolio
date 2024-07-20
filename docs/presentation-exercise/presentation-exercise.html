@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -66,6 +100,24 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+
+<script src="../site_libs/plotly-binding-4.10.2/plotly.js"></script>
+
+<script src="../site_libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+
+<link href="../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+
+<link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+<script src="../site_libs/formattable_widget-binding-0.2.1/formattable_widget.js"></script>
+
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -160,9 +212,641 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Placeholder file for the future data/results presentation exercise.</p>
+<p>#Original</p>
+<p><img src="candy-538.png" class="img-fluid" alt="Original Chart from 538"> #Prompts and Results</p>
+<p>Using ChatGPT, I produced a publication worthy visualization similar to the one published here: https://fivethirtyeight.com/videos/the-ultimate-halloween-candy-power-ranking/ .</p>
+<p>The following are the prompts and resulting code from CGPT:</p>
+<p>Prompt 1: Can you write code in R to recreate this chart? *attached screenshot of chart Result 1: A bare bones code structure that built its own data frame from a set of candy names and win percentages.</p>
+<p>Prompt 2: Can you recreate the chart using this data? *attached .csv file Result 2: Code that created the data frame from the csv file and a ggplot with only the top 18 ranking candies.</p>
+<p>Prompt 3: Can you make the plot interactive? Result 3: Same code as result 2, except using plotly to create the interactive chart instead of using ggplot.</p>
+<p>Prompt 4: Can you add their ranking number next to the candy name? Result 4: Same code as result 3, plus a new variable called rank that is displayed next to the candy name in the ploty plot.</p>
+<p>Prompt 5: Can you write code that displays the rank, candy name, then win percentage bar within a table? Result 5: A formattable table that displays the candy name, win percentage in a color coded single-bar graph, and rank number.</p>
+<p>#Result 1 A bare bones code that created its own data frame for candy_data.</p>
+<p>#Result 2</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"candy-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 85 Columns: 13</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): competitorname
+dbl (12): chocolate, fruity, caramel, peanutyalmondy, nougat, crispedricewaf...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns and rename for clarity</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">CANDY =</span> competitorname, <span class="at">WIN_PERCENTAGE =</span> winpercent)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">18</span>) <span class="co"># Take the top 18 candies</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the data</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(candy_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(CANDY, WIN_PERCENTAGE), <span class="at">y =</span> WIN_PERCENTAGE)) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Candy Ranking by Win Percentage"</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Candy"</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Win Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="presentation-exercise_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>#Result 3</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'plotly'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ggplot2':
+
+    last_plot</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:graphics':
+
+    layout</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"candy-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 85 Columns: 13</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): competitorname
+dbl (12): chocolate, fruity, caramel, peanutyalmondy, nougat, crispedricewaf...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns and rename for clarity</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">CANDY =</span> competitorname, <span class="at">WIN_PERCENTAGE =</span> winpercent)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">18</span>) <span class="co"># Take the top 18 candies</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the ggplot chart</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(candy_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(CANDY, WIN_PERCENTAGE), <span class="at">y =</span> WIN_PERCENTAGE, <span class="at">text =</span> <span class="fu">paste</span>(<span class="st">"Candy:"</span>, CANDY, <span class="st">"&lt;br&gt;Win Percentage:"</span>, WIN_PERCENTAGE))) <span class="sc">+</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Candy Ranking by Win Percentage"</span>,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Candy"</span>,</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Win Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the ggplot chart to an interactive plotly chart</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>interactive_plot <span class="ot">&lt;-</span> <span class="fu">ggplotly</span>(p, <span class="at">tooltip =</span> <span class="st">"text"</span>)</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the interactive chart</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>interactive_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5e0e3f8bff368651f999" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-5e0e3f8bff368651f999">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999947,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000013,0.89999999999999991],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[84.180289999999999,81.866257000000004,81.642914000000005,76.768600000000006,76.673782000000003,73.434989999999999,73.099556000000007,72.887900999999999,71.465050000000005,70.735641000000001,69.483788000000004,67.602936,67.037627999999998,66.971725000000006,66.574584999999999,66.470680000000002,65.716285999999997,64.353340000000003],"y":[18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"text":["Candy: Reese's Peanut Butter cup <br>Win Percentage: 84.18029","Candy: Reese's Miniatures <br>Win Percentage: 81.866257","Candy: Twix <br>Win Percentage: 81.642914","Candy: Kit Kat <br>Win Percentage: 76.7686","Candy: Snickers <br>Win Percentage: 76.673782","Candy: Reese's pieces <br>Win Percentage: 73.43499","Candy: Milky Way <br>Win Percentage: 73.099556","Candy: Reese's stuffed with pieces <br>Win Percentage: 72.887901","Candy: Peanut butter M&M's <br>Win Percentage: 71.46505","Candy: Nestle Butterfinger <br>Win Percentage: 70.735641","Candy: Peanut M&Ms <br>Win Percentage: 69.483788","Candy: 3 Musketeers <br>Win Percentage: 67.602936","Candy: Starburst <br>Win Percentage: 67.037628","Candy: 100 Grand <br>Win Percentage: 66.971725","Candy: M&M's <br>Win Percentage: 66.574585","Candy: Nestle Crunch <br>Win Percentage: 66.47068","Candy: Rolo <br>Win Percentage: 65.716286","Candy: Milky Way Simply Caramel <br>Win Percentage: 64.35334"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":40.182648401826491,"l":169.03279369032791},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Candy Ranking by Win Percentage","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-4.2090145000000003,88.389304499999994],"tickmode":"array","ticktext":["0","20","40","60","80"],"tickvals":[0,20,40,59.999999999999993,80],"categoryorder":"array","categoryarray":["0","20","40","60","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Win Percentage","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,18.600000000000001],"tickmode":"array","ticktext":["Milky Way Simply Caramel","Rolo","Nestle Crunch","M&M's","100 Grand","Starburst","3 Musketeers","Peanut M&Ms","Nestle Butterfinger","Peanut butter M&M's","Reese's stuffed with pieces","Milky Way","Reese's pieces","Snickers","Kit Kat","Twix","Reese's Miniatures","Reese's Peanut Butter cup"],"tickvals":[1,2,3,4,5,5.9999999999999991,7,8,9,10,11,12,13,14,15,16,17,18],"categoryorder":"array","categoryarray":["Milky Way Simply Caramel","Rolo","Nestle Crunch","M&M's","100 Grand","Starburst","3 Musketeers","Peanut M&Ms","Nestle Butterfinger","Peanut butter M&M's","Reese's stuffed with pieces","Milky Way","Reese's pieces","Snickers","Kit Kat","Twix","Reese's Miniatures","Reese's Peanut Butter cup"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":10.62681610626816},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Candy","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"71f43998787d":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"71f43998787d","visdat":{"71f43998787d":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>#Result 4</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order and add ranking</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">18</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RANK =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">CANDY_LABEL =</span> <span class="fu">paste</span>(RANK, CANDY, <span class="at">sep =</span> <span class="st">". "</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the ggplot chart</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(candy_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(CANDY_LABEL, WIN_PERCENTAGE), <span class="at">y =</span> WIN_PERCENTAGE, <span class="at">text =</span> <span class="fu">paste</span>(<span class="st">"Candy:"</span>, CANDY, <span class="st">"&lt;br&gt;Win Percentage:"</span>, WIN_PERCENTAGE))) <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Candy Ranking by Win Percentage"</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Candy"</span>,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Win Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the ggplot chart to an interactive plotly chart</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>interactive_plot <span class="ot">&lt;-</span> <span class="fu">ggplotly</span>(p, <span class="at">tooltip =</span> <span class="st">"text"</span>)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the interactive chart</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>interactive_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-cb24c8f48854efe7b993" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-cb24c8f48854efe7b993">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999947,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000013,0.89999999999999991],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[84.180289999999999,81.866257000000004,81.642914000000005,76.768600000000006,76.673782000000003,73.434989999999999,73.099556000000007,72.887900999999999,71.465050000000005,70.735641000000001,69.483788000000004,67.602936,67.037627999999998,66.971725000000006,66.574584999999999,66.470680000000002,65.716285999999997,64.353340000000003],"y":[18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"text":["Candy: Reese's Peanut Butter cup <br>Win Percentage: 84.18029","Candy: Reese's Miniatures <br>Win Percentage: 81.866257","Candy: Twix <br>Win Percentage: 81.642914","Candy: Kit Kat <br>Win Percentage: 76.7686","Candy: Snickers <br>Win Percentage: 76.673782","Candy: Reese's pieces <br>Win Percentage: 73.43499","Candy: Milky Way <br>Win Percentage: 73.099556","Candy: Reese's stuffed with pieces <br>Win Percentage: 72.887901","Candy: Peanut butter M&M's <br>Win Percentage: 71.46505","Candy: Nestle Butterfinger <br>Win Percentage: 70.735641","Candy: Peanut M&Ms <br>Win Percentage: 69.483788","Candy: 3 Musketeers <br>Win Percentage: 67.602936","Candy: Starburst <br>Win Percentage: 67.037628","Candy: 100 Grand <br>Win Percentage: 66.971725","Candy: M&M's <br>Win Percentage: 66.574585","Candy: Nestle Crunch <br>Win Percentage: 66.47068","Candy: Rolo <br>Win Percentage: 65.716286","Candy: Milky Way Simply Caramel <br>Win Percentage: 64.35334"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":40.182648401826491,"l":184.97301784973016},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Candy Ranking by Win Percentage","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-4.2090145000000003,88.389304499999994],"tickmode":"array","ticktext":["0","20","40","60","80"],"tickvals":[0,20,40,59.999999999999993,80],"categoryorder":"array","categoryarray":["0","20","40","60","80"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Win Percentage","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,18.600000000000001],"tickmode":"array","ticktext":["18. Milky Way Simply Caramel","17. Rolo","16. Nestle Crunch","15. M&M's","14. 100 Grand","13. Starburst","12. 3 Musketeers","11. Peanut M&Ms","10. Nestle Butterfinger","9. Peanut butter M&M's","8. Reese's stuffed with pieces","7. Milky Way","6. Reese's pieces","5. Snickers","4. Kit Kat","3. Twix","2. Reese's Miniatures","1. Reese's Peanut Butter cup"],"tickvals":[1,2,3,4,5,5.9999999999999991,7,8,9,10,11,12,13,14,15,16,17,18],"categoryorder":"array","categoryarray":["18. Milky Way Simply Caramel","17. Rolo","16. Nestle Crunch","15. M&M's","14. 100 Grand","13. Starburst","12. 3 Musketeers","11. Peanut M&Ms","10. Nestle Butterfinger","9. Peanut butter M&M's","8. Reese's stuffed with pieces","7. Milky Way","6. Reese's pieces","5. Snickers","4. Kit Kat","3. Twix","2. Reese's Miniatures","1. Reese's Peanut Butter cup"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":10.62681610626816},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Candy","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"71f452ca2ccf":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"71f452ca2ccf","visdat":{"71f452ca2ccf":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>#Result 5</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(formattable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'formattable' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'formattable'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:plotly':
+
+    style</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order and add ranking</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>candy_data <span class="ot">&lt;-</span> candy_data <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">18</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RANK =</span> <span class="fu">row_number</span>())</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a formattable table</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>formatted_table <span class="ot">&lt;-</span> <span class="fu">formattable</span>(candy_data, <span class="fu">list</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">RANK =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">CANDY =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">WIN_PERCENTAGE =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style =</span> x <span class="sc">~</span> <span class="fu">style</span>(<span class="at">display =</span> <span class="st">"block"</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">direction =</span> <span class="st">"rtl"</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"border-radius"</span> <span class="ot">=</span> <span class="st">"4px"</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"padding-right"</span> <span class="ot">=</span> <span class="st">"2px"</span>,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"background-color"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">75</span>, <span class="st">"orange"</span>, <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="st">"lightgreen"</span>, <span class="st">"lightblue"</span>)),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">width =</span> <span class="fu">paste0</span>(x, <span class="st">"%"</span>)),</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>                             x <span class="sc">~</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, x))</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the formatted table</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>formatted_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-condensed">
+<thead>
+<tr>
+<th style="text-align:right;">
+CANDY
+</th>
+<th style="text-align:right;">
+WIN_PERCENTAGE
+</th>
+<th style="text-align:right;">
+RANK
+</th>
+<th style="text-align:right;">
+CANDY_LABEL
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Reese’s Peanut Butter cup </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 84.18029%">84.2%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">1</span>
+</td>
+<td style="text-align:right;">
+<ol type="1">
+<li>Reese’s Peanut Butter cup
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Reese’s Miniatures </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 81.866257%">81.9%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">2</span>
+</td>
+<td style="text-align:right;">
+<ol start="2" type="1">
+<li>Reese’s Miniatures
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Twix </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 81.642914%">81.6%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">3</span>
+</td>
+<td style="text-align:right;">
+<ol start="3" type="1">
+<li>Twix
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Kit Kat </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 76.7686%">76.8%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">4</span>
+</td>
+<td style="text-align:right;">
+<ol start="4" type="1">
+<li>Kit Kat
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Snickers </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 76.673782%">76.7%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">5</span>
+</td>
+<td style="text-align:right;">
+<ol start="5" type="1">
+<li>Snickers
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Reese’s pieces </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 73.43499%">73.4%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">6</span>
+</td>
+<td style="text-align:right;">
+<ol start="6" type="1">
+<li>Reese’s pieces
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Milky Way </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 73.099556%">73.1%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">7</span>
+</td>
+<td style="text-align:right;">
+<ol start="7" type="1">
+<li>Milky Way
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Reese’s stuffed with pieces</span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 72.887901%">72.9%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">8</span>
+</td>
+<td style="text-align:right;">
+<ol start="8" type="1">
+<li>Reese’s stuffed with pieces
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Peanut butter M&amp;M’s </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 71.46505%">71.5%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">9</span>
+</td>
+<td style="text-align:right;">
+<ol start="9" type="1">
+<li>Peanut butter M&amp;M’s
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Nestle Butterfinger </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.735641%">70.7%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">10</span>
+</td>
+<td style="text-align:right;">
+<ol start="10" type="1">
+<li>Nestle Butterfinger
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Peanut M&amp;Ms </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 69.483788%">69.5%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">11</span>
+</td>
+<td style="text-align:right;">
+<ol start="11" type="1">
+<li>Peanut M&amp;Ms
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">3 Musketeers </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 67.602936%">67.6%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">12</span>
+</td>
+<td style="text-align:right;">
+<ol start="12" type="1">
+<li>3 Musketeers
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Starburst </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 67.037628%">67.0%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">13</span>
+</td>
+<td style="text-align:right;">
+<ol start="13" type="1">
+<li>Starburst
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">100 Grand </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.971725%">67.0%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">14</span>
+</td>
+<td style="text-align:right;">
+<ol start="14" type="1">
+<li>100 Grand
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">M&amp;M’s </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.574585%">66.6%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">15</span>
+</td>
+<td style="text-align:right;">
+<ol start="15" type="1">
+<li>M&amp;M’s
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Nestle Crunch </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.47068%">66.5%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">16</span>
+</td>
+<td style="text-align:right;">
+<ol start="16" type="1">
+<li>Nestle Crunch
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Rolo </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 65.716286%">65.7%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">17</span>
+</td>
+<td style="text-align:right;">
+<ol start="17" type="1">
+<li>Rolo
+</li></ol></td>
+</tr>
+<tr>
+<td style="text-align:right;">
+<span style="color: black">Milky Way Simply Caramel </span>
+</td>
+<td style="text-align:right;">
+<span style="display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 64.35334%">64.4%</span>
+</td>
+<td style="text-align:right;">
+<span style="color: black">18</span>
+</td>
+<td style="text-align:right;">
+<ol start="18" type="1">
+<li>Milky Way Simply Caramel
+</li></ol></td>
+</tr>
+</tbody>
+</table>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>:::</p>
+<p>:::</p>
+<p>#My Tweaked Version</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>candy_data2 <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"candy-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 85 Columns: 13
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): competitorname
+dbl (12): chocolate, fruity, caramel, peanutyalmondy, nougat, crispedricewaf...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns and rename for clarity</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>candy_data2 <span class="ot">&lt;-</span> candy_data2 <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">CANDY =</span> competitorname, <span class="at">WIN_PERCENTAGE =</span> winpercent)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order and add ranking</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>candy_data2 <span class="ot">&lt;-</span> candy_data2 <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RANK =</span> <span class="fu">row_number</span>())</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Customize column names</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>candy_data2 <span class="ot">&lt;-</span> candy_data2 <span class="sc">%&gt;%</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Win Percentage</span><span class="st">`</span> <span class="ot">=</span> WIN_PERCENTAGE)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a formattable table</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>formatted_table <span class="ot">&lt;-</span> <span class="fu">formattable</span>(candy_data2, <span class="fu">list</span>(</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">RANK =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">CANDY =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Win Percentage</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">formatter</span>(<span class="st">"span"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style =</span> x <span class="sc">~</span> <span class="fu">style</span>(<span class="at">display =</span> <span class="st">"block"</span>,</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">direction =</span> <span class="st">"rtl"</span>,</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"border-radius"</span> <span class="ot">=</span> <span class="st">"4px"</span>,</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"padding-right"</span> <span class="ot">=</span> <span class="st">"2px"</span>,</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"background-color"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">75</span>, <span class="st">"orange"</span>, <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="st">"lightgreen"</span>, <span class="st">"lightblue"</span>)),</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">width =</span> <span class="fu">paste0</span>(x, <span class="st">"%"</span>)),</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>                             x <span class="sc">~</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, x))</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a label to the table</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>html_header <span class="ot">&lt;-</span> <span class="st">"&lt;h2 style='text-align: center;'&gt;Halloween Candies Ranked&lt;/h2&gt;"</span></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>html_table <span class="ot">&lt;-</span> <span class="fu">as.htmlwidget</span>(formatted_table)</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>html_table <span class="ot">&lt;-</span> htmltools<span class="sc">::</span><span class="fu">tagList</span>(htmltools<span class="sc">::</span><span class="fu">HTML</span>(html_header), html_table)</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the formatted table with the header</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a>htmltools<span class="sc">::</span><span class="fu">browsable</span>(html_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<h2 style="text-align: center;" class="anchored">Halloween Candies Ranked</h2>
+<div id="htmlwidget-10e75069407b3e464917" class="formattable_widget html-widget " style="width:100%;height:500px;" width="100%" height="500"></div>
+<script type="application/json" data-for="htmlwidget-10e75069407b3e464917">{"x":{"html":"<table class=\"table table-condensed\">\n <thead>\n  <tr>\n   <th style=\"text-align:right;\"> CANDY <\/th>\n   <th style=\"text-align:right;\"> Win Percentage <\/th>\n   <th style=\"text-align:right;\"> RANK <\/th>\n  <\/tr>\n <\/thead>\n<tbody>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Reese's Peanut Butter cup  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 84.18029%\">84.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">1<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Reese's Miniatures         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 81.866257%\">81.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">2<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Twix                       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 81.642914%\">81.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">3<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Kit Kat                    <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 76.7686%\">76.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">4<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Snickers                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: orange; width: 76.673782%\">76.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">5<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Reese's pieces             <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 73.43499%\">73.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">6<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Milky Way                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 73.099556%\">73.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">7<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Reese's stuffed with pieces<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 72.887901%\">72.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">8<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Peanut butter M&amp;M's        <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 71.46505%\">71.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">9<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Nestle Butterfinger        <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.735641%\">70.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">10<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Peanut M&amp;Ms                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 69.483788%\">69.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">11<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">3 Musketeers               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 67.602936%\">67.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">12<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Starburst                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 67.037628%\">67.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">13<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">100 Grand                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.971725%\">67.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">14<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">M&amp;M's                      <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.574585%\">66.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">15<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Nestle Crunch              <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 66.47068%\">66.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">16<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Rolo                       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 65.716286%\">65.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">17<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Milky Way Simply Caramel   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 64.35334%\">64.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">18<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Skittles original          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 63.08514%\">63.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">19<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Hershey's Krackel          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 62.284481%\">62.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">20<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Milky Way Midnight         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 60.800701%\">60.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">21<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Sour Patch Kids            <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 59.863998%\">59.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">22<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Snickers Crisper           <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 59.529251%\">59.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">23<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Hershey's Special Dark     <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 59.236122%\">59.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">24<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Junior Mints               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 57.21925%\">57.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">25<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Haribo Gold Bears          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 57.11974%\">57.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">26<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Baby Ruth                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 56.914547%\">56.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">27<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Hershey's Milk Chocolate   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 56.490501%\">56.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">28<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Hershey's Kisses           <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 55.375454%\">55.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">29<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Nerds                      <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 55.354046%\">55.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">30<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Skittles wildberry         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 55.103695%\">55.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">31<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Milk Duds                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 55.064072%\">55.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">32<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Swedish Fish               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 54.861111%\">54.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">33<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Mr Good Bar                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 54.526451%\">54.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">34<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Lifesavers big ring gummies<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 52.911392%\">52.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">35<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Sour Patch Tricksters      <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 52.825947%\">52.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">36<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Air Heads                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 52.341465%\">52.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">37<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Haribo Sour Bears          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 51.41243%\">51.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">38<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Almond Joy                 <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 50.347546%\">50.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">39<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Tootsie Roll Snack Bars    <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 49.653503%\">49.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">40<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Whoppers                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 49.524113%\">49.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">41<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Tootsie Pop                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 48.982651%\">49.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">42<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Mounds                     <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 47.829754%\">47.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">43<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Trolli Sour Bites          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 47.173229%\">47.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">44<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Gobstopper                 <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 46.783348%\">46.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">45<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Mike &amp; Ike                 <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 46.411716%\">46.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">46<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Payday                     <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 46.296597%\">46.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">47<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">One quarter                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 46.116505%\">46.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">48<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Smarties candy             <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 45.995827%\">46.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">49<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Tootsie Roll Midgies       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 45.736748%\">45.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">50<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Twizzlers                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 45.466282%\">45.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">51<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Welch's Fruit Snacks       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 44.375519%\">44.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">52<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Fruit Chews                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 43.088924%\">43.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">53<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Tootsie Roll Juniors       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 43.068897%\">43.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">54<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Runts                      <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 42.849144%\">42.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">55<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Dots                       <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 42.272076%\">42.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">56<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Haribo Twin Snakes         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 42.178772%\">42.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">57<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Werther's Original Caramel <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 41.904308%\">41.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">58<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Laffy Taffy                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 41.389557%\">41.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">59<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Pop Rocks                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 41.265511%\">41.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">60<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Dum Dums                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 39.460556%\">39.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">61<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Now &amp; Later                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 39.4468%\">39.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">62<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Fun Dip                    <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 39.185505%\">39.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">63<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Lemonhead                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 39.141056%\">39.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">64<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Warheads                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 39.011898%\">39.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">65<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Charleston Chew            <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 38.975037%\">39.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">66<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Candy Corn                 <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 38.010963%\">38.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">67<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Nestle Smarties            <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 37.887188%\">37.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">68<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Pixie Sticks               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 37.722336%\">37.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">69<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Red vines                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 37.348522%\">37.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">70<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Chewey Lemonhead Fruit Mix <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 36.017628%\">36.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">71<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Ring pop                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 35.290756%\">35.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">72<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Sixlets                    <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 34.722%\">34.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">73<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Strawberry bon bons        <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 34.578991%\">34.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">74<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Caramel Apple Pops         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 34.517681%\">34.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">75<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Haribo Happy Cola          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 34.158958%\">34.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">76<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Sugar Babies               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 33.43755%\">33.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">77<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">One dime                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 32.261086%\">32.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">78<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Sugar Daddy                <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 32.230995%\">32.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">79<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Root Beer Barrels          <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 29.703691%\">29.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">80<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Jawbusters                 <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 28.127439%\">28.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">81<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Super Bubble               <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 27.303865%\">27.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">82<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Chiclets                   <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 24.524988%\">24.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">83<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Boston Baked Beans         <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 23.417824%\">23.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">84<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">Nik L Nip                  <\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightblue; width: 22.445341%\">22.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">85<\/span> <\/td>\n  <\/tr>\n<\/tbody>\n<\/table>"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>#Another Table</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>candy_data3 <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"candy-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 85 Columns: 13
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): competitorname
+dbl (12): chocolate, fruity, caramel, peanutyalmondy, nougat, crispedricewaf...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns and rename for clarity</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>candy_data3 <span class="ot">&lt;-</span> candy_data3 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(chocolate <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> caramel <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">CANDY =</span> competitorname, <span class="at">WIN_PERCENTAGE =</span> winpercent)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort data by WIN_PERCENTAGE in descending order and add ranking</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>candy_data3 <span class="ot">&lt;-</span> candy_data3 <span class="sc">%&gt;%</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(WIN_PERCENTAGE)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RANK =</span> <span class="fu">row_number</span>())</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Customize column names</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>candy_data3 <span class="ot">&lt;-</span> candy_data3 <span class="sc">%&gt;%</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Win Percentage</span><span class="st">`</span> <span class="ot">=</span> WIN_PERCENTAGE)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a formattable table</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>formatted_table <span class="ot">&lt;-</span> <span class="fu">formattable</span>(candy_data3, <span class="fu">list</span>(</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">RANK =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">TYPE =</span> <span class="fu">formatter</span>(<span class="st">"span"</span>, <span class="at">style =</span> <span class="sc">~</span> <span class="fu">style</span>(<span class="at">color =</span> <span class="st">"black"</span>)),</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Win Percentage</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">formatter</span>(<span class="st">"span"</span>,</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style =</span> x <span class="sc">~</span> <span class="fu">style</span>(<span class="at">display =</span> <span class="st">"block"</span>,</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">direction =</span> <span class="st">"rtl"</span>,</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"border-radius"</span> <span class="ot">=</span> <span class="st">"4px"</span>,</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"padding-right"</span> <span class="ot">=</span> <span class="st">"2px"</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">"background-color"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">75</span>, <span class="st">"brown"</span>, <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="st">"tan"</span>, <span class="st">"beige"</span>)),</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">width =</span> <span class="fu">paste0</span>(x, <span class="st">"%"</span>)),</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>                             x <span class="sc">~</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, x))</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a label to the table</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>html_header <span class="ot">&lt;-</span> <span class="st">"&lt;h2 style='text-align: center;'&gt;Halloween Candies Ranked: Chocolate &amp; Caramel Edition&lt;/h2&gt;"</span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>html_table <span class="ot">&lt;-</span> <span class="fu">as.htmlwidget</span>(formatted_table)</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>html_table <span class="ot">&lt;-</span> htmltools<span class="sc">::</span><span class="fu">tagList</span>(htmltools<span class="sc">::</span><span class="fu">HTML</span>(html_header), html_table)</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the formatted table with the header</span></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>htmltools<span class="sc">::</span><span class="fu">browsable</span>(html_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<h2 style="text-align: center;" class="anchored">Halloween Candies Ranked: Chocolate &amp; Caramel Edition</h2>
+<div id="htmlwidget-4b03fca439a0011b2844" class="formattable_widget html-widget " style="width:100%;height:500px;" width="100%" height="500"></div>
+<script type="application/json" data-for="htmlwidget-4b03fca439a0011b2844">{"x":{"html":"<table class=\"table table-condensed\">\n <thead>\n  <tr>\n   <th style=\"text-align:right;\"> CANDY <\/th>\n   <th style=\"text-align:right;\"> Win Percentage <\/th>\n   <th style=\"text-align:right;\"> RANK <\/th>\n  <\/tr>\n <\/thead>\n<tbody>\n  <tr>\n   <td style=\"text-align:right;\"> Reese's Peanut Butter cup <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: brown; width: 84.18029%\">84.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">1<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Reese's Miniatures <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: brown; width: 81.866257%\">81.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">2<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Twix <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: brown; width: 81.642914%\">81.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">3<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Kit Kat <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: brown; width: 76.7686%\">76.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">4<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Snickers <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: brown; width: 76.673782%\">76.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">5<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Reese's pieces <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 73.43499%\">73.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">6<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Milky Way <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 73.099556%\">73.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">7<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Reese's stuffed with pieces <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 72.887901%\">72.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">8<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Peanut butter M&M's <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 71.46505%\">71.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">9<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Nestle Butterfinger <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 70.735641%\">70.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">10<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Peanut M&Ms <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 69.483788%\">69.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">11<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 3 Musketeers <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 67.602936%\">67.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">12<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> 100 Grand <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 66.971725%\">67.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">13<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> M&M's <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 66.574585%\">66.6%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">14<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Nestle Crunch <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 66.47068%\">66.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">15<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Rolo <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 65.716286%\">65.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">16<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Milky Way Simply Caramel <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 64.35334%\">64.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">17<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Hershey's Krackel <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 62.284481%\">62.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">18<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Milky Way Midnight <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 60.800701%\">60.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">19<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Snickers Crisper <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 59.529251%\">59.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">20<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Hershey's Special Dark <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 59.236122%\">59.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">21<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Junior Mints <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 57.21925%\">57.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">22<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Baby Ruth <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 56.914547%\">56.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">23<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Hershey's Milk Chocolate <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 56.490501%\">56.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">24<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Hershey's Kisses <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 55.375454%\">55.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">25<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Milk Duds <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 55.064072%\">55.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">26<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Mr Good Bar <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 54.526451%\">54.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">27<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Almond Joy <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: tan; width: 50.347546%\">50.3%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">28<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Tootsie Roll Snack Bars <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 49.653503%\">49.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">29<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Whoppers <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 49.524113%\">49.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">30<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Tootsie Pop <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 48.982651%\">49.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">31<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Mounds <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 47.829754%\">47.8%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">32<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Tootsie Roll Midgies <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 45.736748%\">45.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">33<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Tootsie Roll Juniors <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 43.068897%\">43.1%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">34<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Werther's Original Caramel <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 41.904308%\">41.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">35<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Charleston Chew <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 38.975037%\">39.0%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">36<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Nestle Smarties <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 37.887188%\">37.9%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">37<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Sixlets <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 34.722%\">34.7%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">38<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Caramel Apple Pops <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 34.517681%\">34.5%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">39<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Sugar Babies <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 33.43755%\">33.4%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">40<\/span> <\/td>\n  <\/tr>\n  <tr>\n   <td style=\"text-align:right;\"> Sugar Daddy <\/td>\n   <td style=\"text-align:right;\"> <span style=\"display: block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: beige; width: 32.230995%\">32.2%<\/span> <\/td>\n   <td style=\"text-align:right;\"> <span style=\"color: black\">41<\/span> <\/td>\n  <\/tr>\n<\/tbody>\n<\/table>"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+
+</div>
+</div>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -34,6 +34,7 @@ A bare bones code that created its own data frame for candy_data.
 # Load necessary libraries
 library(ggplot2)
 library(readr)
+library(dplyr)
 
 # Load the data
 candy_data <- read_csv("candy-data.csv")
