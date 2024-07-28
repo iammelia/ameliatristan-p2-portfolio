@@ -1,0 +1,520 @@
+---
+title: "Honey Bee Colonies Impacted by Varroa, American Fouldbrood and Global Warming"
+subtitle: ""
+author: Edward Cruz, Jr, Leonel G. Salazar, Amelia Tristan, Mojisola Popoola
+date: "`r Sys.Date()`"
+format:
+  docx:
+    toc: false
+    number-sections: true
+    highlight-style: github
+bibliography: ../../assets/dataanalysis-references.bib
+csl: ../../assets/apa.csl
+---
+
+The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. You don't need to have exactly these sections, but the content covering those sections should be addressed.
+
+This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
+
+```{r, echo=FALSE, message=FALSE}
+# load a few R packages
+library(here)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(showtext)
+library(ggimage)
+library(ggrepel)
+```
+
+# Summary/Abstract
+
+Group Ten is analyzing the historical data collected by various public agencies to determine if the impact of Varroa, American Foulbrood, and global warming has demonstrated an increase in hive losses across the United States and Texas. The research will be accomplished using data sets derived from the following agencies: National Agricultural Statistics Service, Agricultural Statistics Board, and United States Department of Agriculture (USDA). Data sets contain several years of hive losses from varroa and bacterium, including recent possible environmental thermal global warming. A visualization of outcomes using R demonstrates and validates possible detrimental effects on honeybee colonies in the United States and Texas wrought by the negative impact of mites, bacterium, and global warming that will affect honey production and inevitably impact food production.
+
+{{< pagebreak >}}
+
+# Introduction
+
+```{r, warning = FALSE}
+# Create a data frame with the composition of honey
+honey_data <- data.frame(
+  component = c("Fructose", "Glucose", "Water", "Maltose", "Trisaccharides, Carbohydrates", "Sucrose", "Minerals, Vitamins, Enzymes"),
+  percentage = c(38.5, 31.0, 17.1, 7.2, 4.2, 1.5, 0.5)
+)
+
+# Define colors for the segments
+honey_data$color <- c("#FFA726", "#FB8C00", "#FFD54F", "#FFB74D", "#90CAF9", "#F06292", "#BA68C8")
+
+# Plot with ggplot2
+ggplot(honey_data, aes(x = "", y = percentage, fill = component)) +
+  geom_bar(width = 0.8, stat = "identity", color = "white") +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = honey_data$color) +
+  geom_text(aes(x = 1.8, label = paste0(percentage, "%")), position = position_stack(vjust = 0.6), size = 3, color = "black") +
+  labs(
+    title = "COMPOSITION OF HONEY",
+    subtitle = "Illustration of honey components by percentage",
+    fill = NULL
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(size = 22, face = "bold", hjust = 0.5, family = "lobster"),
+    plot.subtitle = element_text(size = 14, hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 12)
+  )
+```
+
+Honeybees have been nature's pollinators for centuries, with documented relationships with humans dating back to ancient Egyptians and Hindus. Historically, humans have maintained beehives, using honey as medicine in various cultures such as the Egyptian, Assyrian, Chinese, Greek, and Roman cultures. The natural antibacterial properties of honey made it a valuable treatment for wounds and preventing infection; this practice was used by both Romans in ancient times and Russians during World War I. Honeybees and other pollinators are critical for food production and nutritional security, yet bees face a variety of survival challenges. Currently, Varroa mites significantly impact bee colonies. This mite, a tiny red-brown parasite, infests hives and live on adult honeybees and reproduce on larvae and pupae in the developing brood. Another major threat is American Foulbrood Disease (AFB), caused by the bacterium Paenibacillus larvae. AFB is a disease that is fatal to honeybee larvae and is found worldwide. The only effective control measure of AFB is to incinerate and destroy infected hives and live bees, mitigating the infectious spread to other colonies. In addition, the exploration of climate change impacting honeybee colony losses has only recently been researched. While there are correlations between higher winter temperatures and greater colony losses, the effects of warmer autumn and winter temperatures on colony population dynamics and age structure as potential causes of reduced colony survival have not yet been fully investigated.Index Catalog // USDA Economics, Statistics and Market Information System. (n.d.-b). Index Catalog // USDA Economics, Statistics and Market Information System. (n.d.-a). , USDA - National Agricultural Statistics Service - Surveys - honey bee surveys and reports. (n.d.).\
+<https://usda.library.cornell.edu/catalog?f%5Bkeywords_sim%5D%5B%5D=honey+bees&locale=en> <https://www.nass.usda.gov/Surveys/Guide_to_NASS_Surveys/Bee_and_Honey/>
+
+
+```{r}
+library(ggplot2)
+library(sf)
+library(maps)
+```
+
+```{r}
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))
+
+
+```
+
+```{r}
+varroa_data <- data.frame(
+  state = c("alabama", "alaska", "arizona", "arkansas", "california", "colorado", 
+            "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho", 
+            "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", 
+            "maine", "maryland", "massachusetts", "michigan", "minnesota", 
+            "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", 
+            "new jersey", "new mexico", "new york", "north carolina", "north dakota", 
+            "ohio", "oklahoma", "oregon", "pennsylvania", "rhode island", 
+            "south carolina", "south dakota", "tennessee", "texas", "utah", 
+            "vermont", "virginia", "washington", "west virginia", "wisconsin", "wyoming"),
+  year = c("1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995",
+           "1986 - 1987", "1988 - 1989", "1990 - 1991", "1992 - 1993", "1994 - 1995")
+)
+
+```
+
+```{r}
+states <- merge(states, varroa_data, by.x = "ID", by.y = "state", all.x = TRUE)
+
+```
+
+```{r}
+ggplot(data = states) +
+  geom_sf(aes(fill = year), color = "#292929", size = 0.2) +
+  scale_fill_manual(
+    values = c(
+      "1986 - 1987" = "#CD2626", 
+      "1988 - 1989" = "#CD9B1D", 
+      "1990 - 1991" = "#FFD700", 
+      "1992 - 1993" = "#00CD00", 
+      "1994 - 1995" = "#104E8B"
+    ),
+    na.value = "#757575"
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Spread of Varroa Mites",
+    fill = "Year of First Appearance"
+  )
+
+```
+
+Written By:sdns6mchl4. (2016, February 24). Varroa mite spread in the United States. Beesource Beekeeping Forums. https://www.beesource.com/threads/varroa-mite-spread-in-the-united-states.365462/ \## General Background Information
+
+[**Uncapped Honey Floresville,Texas Hive**]{.underline}
+
+![](images/Bee%20Frame%202024-01.jpg){width="674"}
+
+[**Capped Honey one Month Later same hive frame- Italian bees Floresville, Texas**]{.underline}
+
+![](images/Bee%20Frame%20Capped%20Honey.jpg){fig-align="center" width="697"}
+
+## Description of data and data source
+
+Bee colonies maintained by beekeepers are considered livestock by the USDA due to their ability to produce honey, a consumable food item, and their essential role in assisting farmers with pollination during crop seasons. Given the importance of bee colonies in agriculture, it was logical to source data from the following two authoritative websites: 1. USDA National Agricultural Statistics Service (NASS): This site provides comprehensive agricultural data, including statistics on honey production and colony health. 2. Bee Informed Partnership: This site offers detailed insights and research on bee colony management and health, contributing valuable information on the status and trends of bee populations. Index Catalog // USDA Economics, Statistics and Market Information System. (n.d.-a). https://usda.library.cornell.edu/catalog?f%5Bkeywords_sim%5D%5B%5D=honey+bees&locale=en\
+USDA - National Agricultural Statistics Service - Surveys - honey bee surveys and reports. (n.d.). https://www.nass.usda.gov/Surveys/Guide_to_NASS_Surveys/Bee_and_Honey/
+
+## Questions/Hypotheses to be addressed
+
+Hypothesis: "The negative impacts of mites, bacterium, and global warming have detrimental effects on honeybee colonies in the United States and Texas, which in turn will lead to a decline in honey production and negatively impact food production." This hypothesis can be tested and validated through a visualization of outcomes using R, demonstrating the relationship between these factors and their effects on honeybee colonies.
+
+[**Bacterium Infection Foul Brood.**]{.underline}
+
+![](images/American-Foul-Brood-Comb-1024x768-1.jpg)
+
+[**Dead bees resulting from extreme heat found in hive**]{.underline}.
+
+![](images/dead-bees-hive-colony-collapse-600nw-2289939105.webp){width="679"}
+
+To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above and have the right bibtex key. Then you can include like this:
+
+Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
+
+{{< pagebreak >}}
+
+# Methods
+
+*Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement.*
+
+## Schematic of workflow
+
+Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender. We store those figures in the `assets` folder.
+
+```{r}
+#| label: fig-schematic
+#| fig-cap: "A figure that is manually genera#ted and shows some overview/schematic. This has nothing to do with the data, it's just a random one #from one of our projects I found and placed here."
+#| echo: FALSE
+#knitr::include_graphics(here("assets","antigen-recognition.png"))
+```
+
+## Data aquisition
+
+We got our data from the United States Department of Agriculture (USDA).
+
+## Data import and cleaning
+
+Our data was sourced from a few different datasets. We had to remove blank spaces and columns that were not pertinent to our analysis. We then filtered out other observations that did not directly deal with the variables we are exploring: cause of death to bee colonies and how they are affected by mites and climate change. We single out data that represented losses and location to explore the different states by year and determine how the colonies were affected.
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+```
+
+```{r}
+
+data <- read.csv("DatabyState.csv")
+```
+
+```{r}
+View(data)
+```
+
+```{r}
+# Select all columns except 3, 6, and 9
+Data_Clean <- dplyr::select(data, -c(3, 6, 9))
+```
+
+```{r}
+# Output cleaned data file to a csv file.
+write.csv(Data_Clean, "Databystate_Clean.csv")
+```
+
+```{r}
+view(Data_Clean)
+```
+
+```{r}
+# Filter for rows where "Loss" or "Deadout" is present in any column (case-insensitive)
+library(stringr)  # Load stringr package for regular expressions
+data_filtered <- Data_Clean[rowSums(sapply(data, grepl, pattern = c("Loss"), ignore.case = TRUE)) > 0, ]
+```
+
+```{r}
+# Output cleaned data file to a csv file.
+write.csv(Data_Clean, "Databystate_Filtered.csv")
+```
+
+```{r}
+view(Data_Clean)
+```
+*****REMOVE!!!!
+
+STATE ANSI IS THE CODE FOR STATE BY PERIOD AND YEAR. VALUE IS COUNT. ORIGINAL BOXPLOTS WERE EXACTLY THE SAME******
+
+The following data set is organized by year, state, period of the year, type of loss, and count. There are only three observed years, with observations from 2015 to 2017. Loss by collapse disorder describes a colony that losses a majority of its worker bees. Loss by deadout describes a loss of the entire colony: workers, drones, larvae, pupa, and queen. The bar chart shown below depicts loss count by type and period. The periods roughly follow North American seasons; April through June is spring, January through March is winter, July through September is summer, and October through December is fall. We can observe a pattern in the losses increasing in the first half of the year (January through June), while losses decrease the second half. This could suggest that as the weather warms, colonies are affected by the increasing heat.
+```{r}
+ggplot(data_filtered, aes(Data.Item)) + geom_bar() + labs(title = "Bar Chart of Loss Occurances by Type and Period", x = "Loss Type", y = "Count") + facet_wrap(~Period)
+```
+The following chart depicts loss occurrences by year. Since there are only 3 observed years, there is no pattern to see within this chart. However, 2016 has a significant increase in losses. Cross referencing surface level temperature changes reported by NOAA annually, we can see that second to 2024, 2016 has the highest change in temperature in the past 20 years (1.03 C, 33.8F). ***** ADD REF https://www.climate.gov/news-features/understanding-climate/climate-change-global-temperature *****
+
+```{r}
+ggplot(data_filtered, aes(x = Year)) + 
+  geom_histogram(bins = 5, fill = "blue", color = "black", alpha = 0.7) +  # Adding fill color, border color, and transparency
+  scale_x_continuous(breaks = seq(2015, 2017, by = 1)) +
+  labs(title = "Histogram of Loss Count by Year", x = "Year", y = "Count") +  # Adding labels
+  theme_minimal() 
+```
+
+---
+title: "loading/cleaning/wrangling/exploring"
+author: "Edward Cruz"
+format: docx
+---
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(mgcv)
+```
+
+```{r}
+# Output cleaned data file to a csv file.
+hcny_data <- read.csv("hcny_CleanDraft.csv", header = FALSE, stringsAsFactors = FALSE)
+```
+
+```{r}
+head(hcny_data)
+```
+
+```{r}
+str(hcny_data)
+```
+
+```{r}
+summary(hcny_data)
+```
+
+```{r}
+view(hcny_data)
+```
+
+```{r}
+# Merge the first two rows to create a proper header
+header <- hcny_data[1:4, ]
+header <- sapply(header, function(x) paste(na.omit(x), collapse = " "))
+colnames(hcny_data) <- header
+head(header)
+```
+
+```{r}
+# Remove the first two rows (header rows)
+hcnydata_cleaned <- hcny_data[-c(1,2), ]
+#omit all NA
+hcnydata_cleaned <- na.omit(hcnydata_cleaned)
+head(hcnydata_cleaned)
+```
+
+```{r}
+# Assuming hcny_data_cleaned is your cleaned data frame
+colnames(hcnydata_cleaned) <- c("State", "Varroa_Mites", "Other_Parasites", "Disease", "Pesticides", "Other", "Unknown")
+```
+
+```{r}
+head(hcnydata_cleaned)
+```
+
+```{r}
+# Convert specified columns to numeric
+hcnydata_cleaned <- hcnydata_cleaned %>%
+  mutate(across(c("Varroa_Mites", "Other_Parasites", "Disease", "Pesticides", "Other", "Unknown"), as.numeric))
+```
+
+
+```{r}
+head(hcnydata_cleaned)
+```
+
+```{r}
+# Verify the changes
+str(hcnydata_cleaned)
+```
+```{r, message=FALSE}
+#update.packages('mgcv')
+library(mgcv)
+```
+
+```{r}
+# Convert the 'state' column to a factor
+hcnydata_cleaned$State <- as.factor(hcnydata_cleaned$State)
+
+# Display the resulting data frame
+head(hcnydata_cleaned)
+```
+
+```{r}
+view(hcnydata_cleaned)
+```
+
+
+From our project created in the Fall 2023 semester, we found that varroa mites are the top cause for colony loss. Four states had the highest levels of varroa cases and were chosen for comparison, plus the United States: Wisconsin, Texas, Ohio, and Pennsylvania. The box plot below shows one outlier in this top 5 areas, with the average being just above 50.
+```{r}
+ggplot(hcnydata_cleaned, aes(y = Varroa_Mites)) +
+  geom_boxplot(fill = "blue", color = "black") +
+  labs(title = "Boxplot of Varroa Mites",
+       y = "Varroa Mites")
+```
+In comparison to the second most common cause of colony loss, the following scatterplot shows no correlation between disease and varroa mites.
+```{r}
+# Example scatter plot of two variables
+ggplot(hcnydata_cleaned, aes(x = Varroa_Mites, y = Disease)) +
+  geom_point() +
+  labs(title = "Scatter Plot of Varroa Mites vs Disease",
+       x = "Varroa Mites",
+       y = "American and European Foul Brood")
+```
+
+
+
+![](images/_20220406_on_varroadestructor_minden_00463080.jpg){fig-align="center" width="541"}
+
+```{r}
+# Create a bar graph to show state and varroa_mites
+ggplot(data = data_hcny, aes(x = state, y = varroa_mites)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Varroa Mites by State",
+       x = "State",
+       y = "Varroa Mites Count") +
+  theme_minimal() +
+  coord_flip()
+```
+
+Varroa Mite
+
+![](images/Varrpa%201.webp){fig-align="center" width="307"}
+
+![](images/varroa-mite-bee.webp){fig-align="center" width="286"}
+
+## Statistical analysis
+
+*Explain anything related to your statistical analyses.*
+
+{{< pagebreak >}}
+
+# Results
+
+[**`Texas Bee gathering pollen from natural Texas foliage`**]{.underline}
+
+![](images/Bee%20Feeding.jpg){fig-align="center" width="609"}
+
+## Exploratory/Descriptive analysis
+
+*Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project.*
+
+# Remove all rows with any NA values
+
+```{r}
+
+library(tidyr)
+library(dplyr)
+
+
+my_data <- data_hcny %>% drop_na()
+
+# Verify that NAs have been removed
+glimpse(my_data)
+```
+
+# Bivariate Analysis
+
+```{r, message=FALSE, warning=FALSE}
+## Example of a bivariate plot between 'state' and 'varroa_mites'
+ggplot(my_data, aes(x = disease, y = varroa_mites)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Bivariate Relationship between State and Varroa Mites",
+       x = "State",
+       y = "Varroa Mites")
+```
+
+# Multivariable GLM
+
+```{r}
+#install.packages("tidymodels")
+library(tidymodels)
+library(broom)
+library(stats)
+library(MASS)
+# Specify the GLM model
+glm_spec <- linear_reg() %>%
+  set_engine("glm")
+
+# Create a recipe for preprocessing the data
+glm_recipe <- recipe(varroa_mites ~ other_pests + disease + pesticides + other + unknown, data = my_data) %>%
+  step_normalize(all_predictors())
+
+# Create a workflow
+glm_workflow <- workflow() %>%
+  add_model(glm_spec) %>%
+  add_recipe(glm_recipe)
+
+# Fit the model
+glm_fit <- fit(glm_workflow, data = my_data)
+
+# Print the model summary using tidy()
+model_summary <- tidy(glm_fit)
+print(model_summary)
+```
+
+@tbl-summarytable shows a summary of the data.
+
+Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below. I generally recommend the `here` package.
+
+```{r}
+#| label: tbl-summarytable
+#| tbl-cap: "Data summary table."
+#| echo: FALSE
+resulttable=readRDS("../../results/tables/summarytable.rds")
+knitr::kable(resulttable)
+```
+
+## Basic statistical analysis
+
+*To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p\<0.05 means statistical significance" interpretation is not valid.*
+
+@fig-result shows a scatterplot figure produced by one of the R scripts.
+
+```{r}
+#| label: fig-result
+#| fig-cap: "Height and weight stratified by gender."
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","height-weight-stratified.png"))
+```
+
+## Full analysis
+
+*Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here.*
+
+Example @tbl-resulttable2 shows a summary of a linear model fit.
+
+```{r}
+#| label: tbl-resulttable2
+#| tbl-cap: "Linear model fit table."
+#| echo: FALSE
+resulttable2 = readRDS(here("results","tables","resulttable2.rds"))
+knitr::kable(resulttable2)
+```
+
+{{< pagebreak >}}
+
+# Discussion
+
+## Summary and Interpretation
+
+*Summarize what you did, what you found and what it means.*
+
+## Strengths and Limitations
+
+*Discuss what you perceive as strengths and limitations of your analysis.*
+
+## Conclusions
+
+*What are the main take-home messages?*
+
+*Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end*
+
+This paper [@leek2015] discusses types of analyses.
+
+These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template.
+
+Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like.
+
+{{< pagebreak >}}
+
+# References
