@@ -3,3 +3,27 @@ title: "Tidy Tuesday Exercise"
 ---
 
 Placeholder file for the future Tidy Tuesday exercise.
+```{r}
+#library(tidymodels)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+songs = read.csv("songs.csv")
+summary(songs)
+
+#omit any NA in data
+songs = na.omit(songs)
+
+#explore only Season 1 and 2 songs
+songs = songs %>% dplyr::filter(season == "Season_01" | season == "Season_02")
+summary(songs)
+head(songs)
+```
+```{r}
+ggplot(songs, aes(x = result)) + geom_histogram(stat = "count")
+ggplot(songs, aes(x = season)) + geom_histogram(stat = "count")
+```
+
+
